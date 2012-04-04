@@ -81,6 +81,26 @@ public class ConcurrentBucketHashMap<K, V> {
         void removePair(int index) {
             contents.remove(index);
         }
+
+        private int readers = 0;
+        private boolean inUsed = false;
+        private int writeRequests = 0;
+
+        void lockRead() {
+
+        }
+
+        void unlockRead() {
+
+        }
+
+        void lockWrite() {
+
+        }
+
+        void unlockWrite() {
+
+        }
     }
 
     /*
