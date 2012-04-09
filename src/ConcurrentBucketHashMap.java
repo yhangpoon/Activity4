@@ -86,20 +86,32 @@ public class ConcurrentBucketHashMap<K, V> {
         private boolean inUsed = false;
         private int writeRequests = 0;
 
-        void lockRead() {
+        synchronized void lockRead() throws InterruptedException {
+            while (inUsed || writeRequests > 0) {
+                wait();
 
+            }
+            readers++;
         }
 
-        void unlockRead() {
-
+        synchronized void unlockRead() {
+            readers--;
+            notifyAll();
         }
 
-        void lockWrite() {
+        synchronized void lockWrite() throws InterruptedException {
+            writeRequests++;
 
+            while (readers > 0 || inUsed) {
+                wait();
+            }
+            writeRequests--;
+            inUsed = true;
         }
 
-        void unlockWrite() {
-
+        synchronized void unlockWrite() {
+            inUsed = false;
+            notifyAll();
         }
     }
 
@@ -139,7 +151,12 @@ public class ConcurrentBucketHashMap<K, V> {
 
         for (int i = 0; i < numberOfBuckets; i++) {
             Bucket<K, V> theBucket = buckets.get(i);
-            theBucket.lockRead();
+            try {
+                theBucket.lockRead();
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             bucketsReference.add(theBucket);
         }
 
