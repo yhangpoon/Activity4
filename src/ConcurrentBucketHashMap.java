@@ -135,11 +135,18 @@ public class ConcurrentBucketHashMap<K, V> {
     public int size() {
         int size = 0;
 
+        List<Bucket<K, V>> bucketsReference = new ArrayList<Bucket<K, V>>();
+
         for (int i = 0; i < numberOfBuckets; i++) {
             Bucket<K, V> theBucket = buckets.get(i);
-            synchronized (theBucket) {
-                size += theBucket.size();
-            }
+            theBucket.lockRead();
+            bucketsReference.add(theBucket);
+        }
+
+        for (int i = 0; i < numberOfBuckets; i++) {
+            Bucket<K, V> theBucket = bucketsReference.get(i);
+            size += theBucket.size();
+            theBucket.unlockRead();
         }
         return size;
     }
