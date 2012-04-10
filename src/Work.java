@@ -38,8 +38,6 @@ public class Work extends Thread {
                     System.err.print(e.toString());
                 }
                 if (map.containsKey("Key" + i)) {
-                    System.out.println("Thread " + threadNumber
-                            + " removes 'Key" + i + "'");
                     map.remove("Key" + i);
                     System.out.println("Thread " + threadNumber
                             + " removes 'Key" + i + "'");
