@@ -89,7 +89,6 @@ public class ConcurrentBucketHashMap<K, V> {
         synchronized void lockRead() throws InterruptedException {
             while (inUsed || writeRequests > 0) {
                 wait();
-
             }
             readers++;
         }
@@ -105,8 +104,8 @@ public class ConcurrentBucketHashMap<K, V> {
             while (readers > 0 || inUsed) {
                 wait();
             }
-            writeRequests--;
             inUsed = true;
+            writeRequests--;
         }
 
         synchronized void unlockWrite() {
