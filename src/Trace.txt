@@ -1,0 +1,88 @@
+Program Started
+Starting map size = 50
+____________________________________
+Thread 1 Begins
+Thread 2 Begins
+Thread 3 Begins
+/*******************************************************
+** Nearly at the same moment, the three threads checked
+** to see if the key they wanted to remove exist or not.
+** They all "saw" that those keys existed so they removed
+** them
+********************************************************/
+Tue Apr 10 19:03:03 EDT 2012 Thread 1 removes 'Key0'
+Tue Apr 10 19:03:03 EDT 2012 Thread 1 Starts Sleep
+Tue Apr 10 19:03:03 EDT 2012 Thread 2 removes 'Key2'
+Tue Apr 10 19:03:03 EDT 2012 Thread 3 removes 'Key1'
+Tue Apr 10 19:03:03 EDT 2012 Thread 2 Starts Sleep
+Tue Apr 10 19:03:03 EDT 2012 Thread 3 Starts Sleep
+Tue Apr 10 19:03:04 EDT 2012 Thread 3 Ends Sleep
+Tue Apr 10 19:03:04 EDT 2012 Thread 1 Ends Sleep
+Tue Apr 10 19:03:04 EDT 2012 Thread 2 Ends Sleep
+Tue Apr 10 19:03:04 EDT 2012 Thread 1 adds 'Key52'
+Tue Apr 10 19:03:04 EDT 2012 Thread 2 adds 'Key54'
+/*******************************************************
+** Because the bucket cannot be read until all write has
+** processed, therefore, the following two lines show that
+** Thread 1 & 2 both sees the map size is 49 after Thread 
+** 1 & 2 both added a new key to the map. (otherwise, 
+** Thread 1 should see it as 48, and Thread 2 should see it
+** as 49)
+*********************************************************/
+Tue Apr 10 19:03:04 EDT 2012 Thread 1 sees map size as 49
+Tue Apr 10 19:03:04 EDT 2012 Thread 2 sees map size as 49
+Tue Apr 10 19:03:04 EDT 2012 Thread 1 removes 'Key0'
+Tue Apr 10 19:03:04 EDT 2012 Thread 2 removes 'Key2'
+Tue Apr 10 19:03:04 EDT 2012 Thread 1 Starts Sleep
+Tue Apr 10 19:03:04 EDT 2012 Thread 2 Starts Sleep
+Tue Apr 10 19:03:04 EDT 2012 Thread 3 adds 'Key53'
+/*********************************************************
+** At the same time Thread 1 & 2 each removed a key and 
+** Thread 3 added a new key. Again, this scenario shows that
+** the bucket cannot be read (size() method) until all write
+** has been processed.
+***********************************************************/
+Tue Apr 10 19:03:04 EDT 2012 Thread 3 sees map size as 48
+Tue Apr 10 19:03:04 EDT 2012 Thread 3 removes 'Key1'
+Tue Apr 10 19:03:04 EDT 2012 Thread 3 Starts Sleep
+Tue Apr 10 19:03:05 EDT 2012 Thread 1 Ends Sleep
+Tue Apr 10 19:03:05 EDT 2012 Thread 1 adds 'Key52'
+/*********************************************************
+** Again, bucket cannot be read before all write has been
+** processed.
+*********************************************************/
+Tue Apr 10 19:03:05 EDT 2012 Thread 1 sees map size as 48
+Tue Apr 10 19:03:05 EDT 2012 Thread 1 Starts Sleep
+Tue Apr 10 19:03:05 EDT 2012 Thread 2 Ends Sleep
+Tue Apr 10 19:03:05 EDT 2012 Thread 2 adds 'Key54'
+Tue Apr 10 19:03:05 EDT 2012 Thread 2 sees map size as 49
+Tue Apr 10 19:03:05 EDT 2012 Thread 2 Starts Sleep
+Tue Apr 10 19:03:05 EDT 2012 Thread 3 Ends Sleep
+Tue Apr 10 19:03:05 EDT 2012 Thread 3 adds 'Key53'
+Tue Apr 10 19:03:05 EDT 2012 Thread 3 sees map size as 50
+Tue Apr 10 19:03:05 EDT 2012 Thread 3 Starts Sleep
+Tue Apr 10 19:03:07 EDT 2012 Thread 1 Ends Sleep
+Tue Apr 10 19:03:07 EDT 2012 Thread 1 adds 'Key50'
+Tue Apr 10 19:03:07 EDT 2012 Thread 1 sees map size as 51
+Tue Apr 10 19:03:07 EDT 2012 Thread 1 adds 'Key51'
+Tue Apr 10 19:03:07 EDT 2012 Thread 1 sees map size as 52
+Tue Apr 10 19:03:07 EDT 2012 Thread 1 adds 'Key52'
+Tue Apr 10 19:03:07 EDT 2012 Thread 3 Ends Sleep
+Tue Apr 10 19:03:07 EDT 2012 Thread 1 sees map size as 53
+Tue Apr 10 19:03:07 EDT 2012 Thread 1 Finished and Size is 53
+Tue Apr 10 19:03:07 EDT 2012 Thread 3 adds 'Key53'
+Tue Apr 10 19:03:07 EDT 2012 Thread 2 Ends Sleep
+Tue Apr 10 19:03:07 EDT 2012 Thread 3 sees map size as 54
+Tue Apr 10 19:03:07 EDT 2012 Thread 2 adds 'Key54'
+Tue Apr 10 19:03:07 EDT 2012 Thread 2 sees map size as 55
+Tue Apr 10 19:03:07 EDT 2012 Thread 3 adds 'Key55'
+Tue Apr 10 19:03:07 EDT 2012 Thread 3 sees map size as 56
+Tue Apr 10 19:03:07 EDT 2012 Thread 2 adds 'Key56'
+Tue Apr 10 19:03:07 EDT 2012 Thread 2 sees map size as 57
+Tue Apr 10 19:03:07 EDT 2012 Thread 3 adds 'Key57'
+Tue Apr 10 19:03:07 EDT 2012 Thread 3 sees map size as 58
+Tue Apr 10 19:03:07 EDT 2012 Thread 3 Finished and Size is 58
+Tue Apr 10 19:03:07 EDT 2012 Thread 2 adds 'Key58'
+Tue Apr 10 19:03:07 EDT 2012 Thread 2 sees map size as 59
+Tue Apr 10 19:03:07 EDT 2012 Thread 2 Finished and Size is 59
+Program Ended
