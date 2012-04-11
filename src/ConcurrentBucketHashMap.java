@@ -2,20 +2,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
- * A SynchronizedBucketHashMap implements a subset of the Map interface.
- * It would be relatively easy (but tedious) to add the
- * missing methods to bring this into conformance with the
- * Map interface.
+ * ConcurrentBucketHashMap stores key/value pair objects in list of
+ * buckets.
  *
  * The idea is that a key/value Pair objects are placed in one
  * of N Buckets based on the hashcode of the key mod N. The
  * Buckets are contained in an array, and hashcode based selector
  * is the index into the array of the appropriate Bucket.
  *
- * In this version, all synchronization is done using built-in
- * Java synchronized blocks. This is inefficient, as it does not
- * support concurrent reading, and does not allow a consistent
- * compoutation of the size.
+ * This version uses explicit lock/unlock inside Bucket to support 
+ * concurrent read.
  */
 
 public class ConcurrentBucketHashMap<K, V> {
@@ -41,8 +37,8 @@ public class ConcurrentBucketHashMap<K, V> {
 
     /*
      * A Bucket holds all the key/value pairs in the map that have the same hash
-     * code (modulo the number of buckets). The object consists of an extensible
-     * "contents" list protected with a ReadWriteLock "rwl".
+     * code (modulo the number of buckets). This model is implemented with
+     * explicit read/write lock.
      */
     class Bucket<K, V> {
         private final List<Pair<K, V>> contents = new ArrayList<Pair<K, V>>();
@@ -82,10 +78,27 @@ public class ConcurrentBucketHashMap<K, V> {
             contents.remove(index);
         }
 
+        /**
+         * Number of readers.
+         */
         private int readers = 0;
+
+        /**
+         * Status of the bucket, whether it's being used by any writer or not.
+         */
         private boolean inUsed = false;
+
+        /**
+         * Writer that waiting to use the bucket and write.
+         */
         private int writeRequests = 0;
 
+        /**
+         * Read lock for readers.
+         * 
+         * @throws InterruptedException
+         *             - from wait()
+         */
         synchronized void lockRead() throws InterruptedException {
             while (inUsed || writeRequests > 0) {
                 wait();
@@ -93,11 +106,20 @@ public class ConcurrentBucketHashMap<K, V> {
             readers++;
         }
 
+        /**
+         * Read unlock for readers.
+         */
         synchronized void unlockRead() {
             readers--;
             notifyAll();
         }
 
+        /**
+         * Write lock for writers.
+         * 
+         * @throws InterruptedException
+         *             - from wait()
+         */
         synchronized void lockWrite() throws InterruptedException {
             writeRequests++;
 
@@ -108,6 +130,9 @@ public class ConcurrentBucketHashMap<K, V> {
             writeRequests--;
         }
 
+        /**
+         * Write unlock for writers.
+         */
         synchronized void unlockWrite() {
             inUsed = false;
             notifyAll();
@@ -115,7 +140,7 @@ public class ConcurrentBucketHashMap<K, V> {
     }
 
     /*
-     * Constructor for the SynchronizedBucketHashMap proper.
+     * Constructor for the ConcurrentBucketHashMap proper.
      */
     public ConcurrentBucketHashMap(int nbuckets) {
         numberOfBuckets = nbuckets;
@@ -132,11 +157,11 @@ public class ConcurrentBucketHashMap<K, V> {
     public boolean containsKey(K key) {
         Bucket<K, V> theBucket = buckets.get(bucketIndex(key));
         boolean contains;
+
         try {
             theBucket.lockRead();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.err.println(e.toString());
         }
 
         contains = findPairByKey(key, theBucket) >= 0;
@@ -159,8 +184,7 @@ public class ConcurrentBucketHashMap<K, V> {
             try {
                 theBucket.lockRead();
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                System.err.println(e.toString());
             }
             bucketsReference.add(theBucket);
         }
@@ -183,8 +207,7 @@ public class ConcurrentBucketHashMap<K, V> {
         try {
             theBucket.lockRead();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.err.println(e.toString());
         }
         ;
         int index = findPairByKey(key, theBucket);
@@ -210,8 +233,7 @@ public class ConcurrentBucketHashMap<K, V> {
         try {
             theBucket.lockWrite();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.err.println(e.toString());
         }
         int index = findPairByKey(key, theBucket);
 
@@ -239,8 +261,7 @@ public class ConcurrentBucketHashMap<K, V> {
         try {
             theBucket.lockWrite();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.err.println(e.toString());
         }
         int index = findPairByKey(key, theBucket);
 
